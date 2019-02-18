@@ -44,13 +44,15 @@ def display_menu():
         print('\n' + item)
 
 def add_new_record():
-    record_holder = input('Enter a new record holder name: ')
-    country = input('Enter country of record holder: ')
-    catches = int(input('Enter a number of catches'))
     try:
+        record_holder = input('Enter a new record holder name: ')
+        country = input('Enter country of record holder: ')
+        catches = int(input('Enter a number of catches: '))
         cur.execute('insert into records values(?, ?, ?)', (record_holder, country, catches))
     except sqlite3.Error as e:
         print(e)
+    except ValueError:
+        print('Do not enter a string into the catches')
 def search_records():
     record_holder = input('Enter a record holder to find: ')
     try:
@@ -62,15 +64,16 @@ def search_records():
                 print('catches: ' + str(row['catches']))
         else:
             for row in cur.execute('select * from records where record_holder = ?', (record_holder,)):
-                print(row['record_holder'])
-                print(row['country'])
-                print(row['catches'])
+                print('record holder: ' + row['record_holder'])
+                print('country: ' + row['country'])
+                print('catches: ' + str(row['catches']))
     except sqlite3.Error as e:
         print(e)
+
 def update_record():
     try:
         record_holder = input('Enter record holder to update: ')
-        catches = int(input('Enter amount of catches'))
+        catches = int(input('Enter amount of catches: '))
         cur.execute('update records set catches = ? where record_holder = ?', (catches, record_holder))
         print('\nrecord updated')
     except sqlite3.Error as e:
